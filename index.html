@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Only for you Srishty</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Quicksand & Dancing Script for romantic aesthetic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti for the grand finale celebration -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        /* Custom Fonts & Base Aesthetics */
+        body {
+            font-family: 'Quicksand', sans-serif;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #ffe6f0 0%, #f3e8ff 50%, #e0e7ff 100%);
+            min-height: 100vh;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .font-cursive {
+            font-family: 'Dancing Script', cursive;
+        }
+
+        /* Floating Hearts Background Animation */
+        .floating-hearts-container {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .floating-heart {
+            position: absolute;
+            bottom: -50px;
+            opacity: 0.6;
+            animation: floatUp linear infinite;
+            filter: drop-shadow(0 2px 4px rgba(244, 114, 182, 0.2));
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) rotate(0deg) scale(0.8);
+                opacity: 0;
+            }
+            15% {
+                opacity: 0.7;
+            }
+            85% {
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-110vh) rotate(360deg) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        /* Glassmorphism Card Style */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 2px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 20px 50px rgba(236, 72, 153, 0.15), 0 8px 20px rgba(168, 85, 247, 0.08);
+        }
+
+        /* Page Step Transition Animations */
+        .page-step {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px) scale(0.97);
+            transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1), transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .page-step.active {
+            display: flex;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        /* Gentle Bounce & Pulse Animations */
+        @keyframes gentleBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .animate-gentle-bounce {
+            animation: gentleBounce 2.5s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            15% { transform: scale(1.18); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.12); }
+            60% { transform: scale(1); }
+        }
+
+        .animate-heartbeat {
+            animation: heartbeat 1.8s infinite;
+        }
+
+        /* Custom Button Glow */
+        .btn-romantic {
+            background: linear-gradient(135deg, #f472b6 0%, #c084fc 100%);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 8px 20px -4px rgba(244, 114, 182, 0.5);
+        }
+
+        .btn-romantic:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 12px 25px -4px rgba(244, 114, 182, 0.65);
+        }
+
+        .btn-romantic:active {
+            transform: translateY(1px) scale(0.98);
+        }
+
+        /* Dodging No Button Smooth Transition */
+        #noBtn {
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), left 0.25s ease, top 0.25s ease;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center p-4 sm:p-6 relative">
+
+    <!-- Ambient Floating Hearts Container -->
+    <div id="heartsContainer" class="floating-hearts-container" aria-hidden="true"></div>
+
+    <!-- Main Interactive Card Container -->
+    <main class="relative z-10 w-full max-w-md sm:max-w-lg">
+        <div class="glass-card rounded-3xl p-6 sm:p-10 flex flex-col items-center text-center min-h-[460px] sm:min-h-[500px] justify-between relative overflow-hidden">
+            
+            <!-- Top Progress Indicator -->
+            <header class="w-full flex flex-col items-center gap-2 mb-4">
+                <div class="flex items-center justify-center gap-2" id="progressDots" role="progressbar" aria-valuemin="1" aria-valuemax="6" aria-valuenow="1">
+                    <span class="dot w-8 h-2.5 rounded-full bg-pink-500 transition-all duration-300"></span>
+                    <span class="dot w-2.5 h-2.5 rounded-full bg-pink-200 transition-all duration-300"></span>
+                    <span class="dot w-2.5 h-2.5 rounded-full bg-pink-200 transition-all duration-300"></span>
+                    <span class="dot w-2.5 h-2.5 rounded-full bg-pink-200 transition-all duration-300"></span>
+                    <span class="dot w-2.5 h-2.5 rounded-full bg-pink-200 transition-all duration-300"></span>
+                    <span class="dot w-2.5 h-2.5 rounded-full bg-pink-200 transition-all duration-300"></span>
+                </div>
+                <span id="stepCounter" class="text-xs font-semibold tracking-wider uppercase text-pink-400">Page 1 of 6</span>
+            </header>
+
+            <!-- ================= PAGE 1: WELCOME ================= -->
+            <section id="step-1" class="page-step active flex-col items-center justify-center flex-1 w-full my-auto">
+                <div class="w-24 h-24 rounded-full bg-pink-100/80 flex items-center justify-center mb-6 shadow-inner animate-gentle-bounce">
+                    <span class="text-5xl" role="img" aria-label="Love Letter">💌</span>
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-bold text-slate-800 mb-3 leading-snug">
+                    Hey!!!!!!!!!!! Srishty, I have something to tell you...
+                </h1>
+                <p class="text-slate-600 text-base sm:text-lg mb-8 max-w-xs sm:max-w-sm leading-relaxed">
+                    I made this little corner of the internet just for you. Take a deep breath and click below ✨
+                </p>
+                <button onclick="goToStep(2)" class="btn-romantic text-white font-bold py-3.5 px-9 rounded-full text-base sm:text-lg flex items-center gap-2 cursor-pointer">
+                    <span>Start</span>
+                    <span class="text-xl">→</span>
+                </button>
+            </section>
+
+            <!-- ================= PAGE 2: THE QUESTION ================= -->
+            <section id="step-2" class="page-step flex-col items-center justify-center flex-1 w-full my-auto">
+                <div class="w-24 h-24 rounded-full bg-purple-100/80 flex items-center justify-center mb-6 shadow-inner animate-gentle-bounce">
+                    <span class="text-5xl" role="img" aria-label="Sparkles and Crown">👑</span>
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-bold text-slate-800 mb-4 leading-snug">
+                    Do you know who the prettiest girl in the world is?
+                </h2>
+                
+                <!-- Playful Interactive Hint Pill -->
+                <div class="mb-8">
+                    <button id="hintToggleBtn" onclick="toggleHint()" class="text-xs sm:text-sm font-semibold text-purple-600 bg-purple-100/80 hover:bg-purple-200/80 px-4 py-1.5 rounded-full transition-colors cursor-pointer">
+                        Need a tiny hint? 🔍
+                    </button>
+                    <p id="hintText" class="hidden mt-3 text-sm text-pink-600 font-medium bg-pink-50/90 px-4 py-2 rounded-2xl border border-pink-100 animate-fade-in">
+                        Hint: She has the most beautiful, big eyes in the world.... 🤭✨
+                    </p>
+                </div>
+
+                <button onclick="goToStep(3)" class="btn-romantic text-white font-bold py-3.5 px-9 rounded-full text-base sm:text-lg flex items-center gap-2 cursor-pointer">
+                    <span>Next</span>
+                    <span>→</span>
+                </button>
+            </section>
+
+            <!-- ================= PAGE 3: SWEET BUILDUP 1 ================= -->
+            <section id="step-3" class="page-step flex-col items-center justify-center flex-1 w-full my-auto">
+                <div class="w-24 h-24 rounded-full bg-rose-100/80 flex items-center justify-center mb-6 shadow-inner animate-gentle-bounce">
+                    <span class="text-5xl" role="img" aria-label="Blushing Smile">🥰</span>
+                </div>
+                <h2 class="text-xl sm:text-2xl font-bold text-pink-600 mb-3">
+                    Here's a little clue about her...
+                </h2>
+                <p class="text-slate-700 text-base sm:text-lg mb-8 max-w-sm leading-relaxed font-medium bg-white/60 p-5 rounded-2xl border border-pink-100/80 shadow-sm">
+                    "She has the brightest smile that makes my whole day better, and every time we talk, I can't stop smiling..."
+                </p>
+                <button onclick="goToStep(4)" class="btn-romantic text-white font-bold py-3.5 px-9 rounded-full text-base sm:text-lg flex items-center gap-2 cursor-pointer">
+                    <span>Next</span>
+                    <span>→</span>
+                </button>
+            </section>
+
+            <!-- ================= PAGE 4: SWEET BUILDUP 2 ================= -->
+            <section id="step-4" class="page-step flex-col items-center justify-center flex-1 w-full my-auto">
+                <div class="w-24 h-24 rounded-full bg-fuchsia-100/80 flex items-center justify-center mb-6 shadow-inner animate-gentle-bounce">
+                    <span class="text-5xl" role="img" aria-label="Sparkling Heart">💖</span>
+                </div>
+                <h2 class="text-xl sm:text-2xl font-bold text-purple-600 mb-3">
+                    And one more thing...
+                </h2>
+                <p class="text-slate-700 text-base sm:text-lg mb-8 max-w-sm leading-relaxed font-medium bg-white/60 p-5 rounded-2xl border border-purple-100/80 shadow-sm">
+                    "Honestly, out of everyone I know, she's the most amazing, kind, and wonderful person I've ever met..."
+                </p>
+                <button onclick="goToStep(5)" class="btn-romantic text-white font-bold py-3.5 px-9 rounded-full text-base sm:text-lg flex items-center gap-2 cursor-pointer">
+                    <span>Next</span>
+                    <span>→</span>
+                </button>
+            </section>
+
+            <!-- ================= PAGE 5: PHOTO REVEAL ================= -->
+            <section id="step-5" class="page-step flex-col items-center justify-center flex-1 w-full my-auto">
+                <h2 class="text-2xl sm:text-3xl font-bold text-slate-800 mb-2 leading-snug">
+                    Want to see her photo? 📸✨
+                </h2>
+                <p class="text-slate-600 text-xs sm:text-sm mb-4">
+                    The prettiest girl in the entire world...
+                </p>
+
+                <!-- Polaroid / Romantic Framed Photo Container -->
+                <div class="bg-white p-3 pb-5 rounded-2xl shadow-lg border-2 border-pink-200/90 transform -rotate-1 hover:rotate-0 transition-transform duration-300 w-56 sm:w-64 mb-4 relative group">
+                    <div id="photoFrame" class="w-full aspect-square rounded-xl bg-gradient-to-br from-pink-100 via-rose-50 to-purple-100 overflow-hidden flex flex-col items-center justify-center relative border border-pink-100">
+                        <!-- Placeholder when no photo is added -->
+                        <div id="photoPlaceholder" class="flex flex-col items-center justify-center p-4 text-center">
+                            <span class="text-4xl mb-2 animate-gentle-bounce">🌸</span>
+                            
+                        </div>
+
+                        <!-- Uploaded Image Preview -->
+                        <img id="preview-img" src="sristy.jpg" alt="Her Photo" class="w-full h-64 object-cover rounded-lg" />
+                    </div>
+
+                    <!-- Polaroid Caption -->
+                    <p class="font-cursive text-xl sm:text-2xl text-pink-600 mt-2.5 tracking-wide">
+                        Prettiest Girl 💖
+                    </p>
+                </div>
+
+                <!-- Upload & Clean View Controls -->
+                <div id="photoControls" class="flex flex-wrap items-center justify-center gap-2 mb-5">
+                    <input type="file" id="photoInput" accept="image/*" class="hidden" onchange="handlePhotoUpload(event)" />
+                    <button onclick="document.getElementById('photoInput').click()" class="text-xs font-bold text-purple-600 bg-purple-100 hover:bg-purple-200 px-3.5 py-2 rounded-full transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm">
+                        <span></span>
+                       
+                    </button>
+                    <button id="hideControlsBtn" onclick="togglePhotoControls(true)" class="hidden text-xs font-semibold text-slate-500 bg-white/80 hover:bg-white px-3 py-2 rounded-full border border-slate-200 transition-colors cursor-pointer" title="Hide buttons before showing her">
+                        <span>👁️ Hide Edit</span>
+                    </button>
+                </div>
+
+                <!-- Tiny subtle restore trigger when controls are hidden -->
+                <button id="showControlsBtn" onclick="togglePhotoControls(false)" class="hidden text-[10px] text-pink-300 hover:text-pink-500 mb-3 underline cursor-pointer">
+                    Edit photo
+                </button>
+
+                <button onclick="goToStep(6)" class="btn-romantic text-white font-bold py-3.5 px-9 rounded-full text-base sm:text-lg flex items-center gap-2 cursor-pointer">
+                    <span>Reveal Confession</span>
+                    <span>💖</span>
+                </button>
+            </section>
+
+            <!-- ================= PAGE 6: GRAND REVEAL ================= -->
+            <section id="step-6" class="page-step flex-col items-center justify-center flex-1 w-full my-auto">
+                <!-- Reveal Header -->
+                <div class="inline-block bg-pink-100 text-pink-600 font-bold text-xs sm:text-sm px-4 py-1.5 rounded-full mb-3 tracking-wide shadow-sm">
+                    Spoiler alert: It's YOU! 💖
+                </div>
+
+                <!-- Big Heart Icon -->
+                <div class="text-6xl sm:text-7xl mb-2 animate-heartbeat select-none" role="img" aria-label="Beating Heart">
+                    💝
+                </div>
+
+                <!-- Big Cursive Confession -->
+                <h1 class="font-cursive text-5xl sm:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-rose-500 to-purple-600 mb-3 py-1">
+                    I Like You!
+                </h1>
+
+                <p class="text-slate-600 text-sm sm:text-base mb-6 max-w-xs sm:max-w-sm">
+                    You really are the prettiest girl in the world to me. So I have to ask...
+                </p>
+
+                <!-- Interactive Question Box -->
+                <div id="questionBox" class="w-full bg-white/75 rounded-2xl p-5 border border-pink-200/80 shadow-sm relative">
+                    <p class="text-lg sm:text-xl font-bold text-slate-800 mb-5">
+                        Do you like me too? 🥺👉👈
+                    </p>
+
+                    <div id="buttonPlayground" class="flex items-center justify-center gap-4 min-h-[56px] relative">
+                        <!-- YES Button -->
+                        <button id="yesBtn" onclick="celebrateYes()" class="btn-romantic text-white font-bold py-3 px-8 rounded-full text-base sm:text-lg cursor-pointer z-10">
+                            Yes! 💕
+                        </button>
+
+                        <!-- Dodging NO Button -->
+                        <button id="noBtn" class="bg-slate-200 hover:bg-slate-300 text-slate-600 font-semibold py-3 px-7 rounded-full text-base sm:text-lg cursor-pointer z-20">
+                            No
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Celebration Message (Hidden until Yes is clicked) -->
+                <div id="yesCelebration" class="hidden w-full bg-gradient-to-br from-pink-100/90 to-purple-100/90 rounded-2xl p-6 border-2 border-pink-300 shadow-md mt-2">
+                    <div class="text-4xl mb-2">🎉🥰💞</div>
+                    <h3 class="text-xl sm:text-2xl font-bold text-pink-600 mb-2">
+                        Yay!! You just made me the happiest person ever!
+                    </h3>
+                    <p class="text-slate-700 text-sm sm:text-base font-medium">
+                        Can't wait to talk to you more and make lots of cute memories together! 💖✨
+                    </p>
+                    <button onclick="resetExperience()" class="mt-4 text-xs font-semibold text-purple-600 hover:text-purple-800 underline cursor-pointer">
+                        Replay from start ↺
+                    </button>
+                </div>
+            </section>
+
+            <!-- Subtle Footer / Back Option -->
+            <footer class="w-full mt-4 flex items-center justify-between text-xs text-slate-400 px-1">
+                <button id="backBtn" onclick="prevStep()" class="invisible hover:text-pink-500 font-semibold transition-colors flex items-center gap-1 cursor-pointer py-1 px-2">
+                    <span>← Back</span>
+                </button>
+                <span class="text-pink-300 font-medium">Made with 💖 just for you</span>
+                <span class="w-12"></span> <!-- Spacer for balanced centering -->
+            </footer>
+
+        </div>
+    </main>
+
+    <script>
+        // ==========================================
+        // STATE & CONFIGURATION
+        // ==========================================
+        let currentStep = 1;
+        const totalSteps = 6;
+        let noDodgeCount = 0;
+        const PHOTO_STORAGE_KEY = 'confession_her_photo_data';
+        const playfulNoTexts = [
+            "Nope! 😅",
+            "Are you sure?",
+            "Think again! 🥺",
+            "Nice try! 😜",
+            "Too slow! 💨",
+            "Click Yes! 💕",
+            "love you! 🤭"
+        ];
+
+        // ==========================================
+        // AMBIENT FLOATING HEARTS GENERATOR
+        // ==========================================
+        function createFloatingHearts() {
+            const container = document.getElementById('heartsContainer');
+            const heartEmojis = ['💖', '💕', '💗', '💓', '🌸', '✨', '💜'];
+            const heartCount = 22;
+
+            for (let i = 0; i < heartCount; i++) {
+                const heart = document.createElement('span');
+                heart.classList.add('floating-heart');
+                heart.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
+                
+                // Randomize horizontal position, size, duration, and delay
+                const leftPos = Math.random() * 100;
+                const size = Math.random() * 16 + 14; // 14px to 30px
+                const duration = Math.random() * 8 + 8; // 8s to 16s
+                const delay = Math.random() * 10;
+
+                heart.style.left = `${leftPos}%`;
+                heart.style.fontSize = `${size}px`;
+                heart.style.animationDuration = `${duration}s`;
+                heart.style.animationDelay = `-${delay}s`;
+
+                container.appendChild(heart);
+            }
+        }
+
+        // ==========================================
+        // MULTI-STEP NAVIGATION LOGIC
+        // ==========================================
+        function goToStep(stepNumber) {
+            if (stepNumber < 1 || stepNumber > totalSteps) return;
+
+            // Hide current active step
+            const currentEl = document.getElementById(`step-${currentStep}`);
+            if (currentEl) {
+                currentEl.classList.remove('active');
+            }
+
+            // Update step state
+            currentStep = stepNumber;
+
+            // Show new step with slight delay for smooth transition
+            const nextEl = document.getElementById(`step-${currentStep}`);
+            if (nextEl) {
+                // Force reflow so transition plays reliably
+                void nextEl.offsetWidth;
+                nextEl.classList.add('active');
+            }
+
+            updateProgressUI();
+
+            // Trigger confetti automatically on arriving at Page 6 (Final Confession)
+            if (currentStep === 6) {
+                triggerConfettiBurst();
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                goToStep(currentStep - 1);
+            }
+        }
+
+        function updateProgressUI() {
+            // Update dots
+            const dots = document.querySelectorAll('#progressDots .dot');
+            const progressBar = document.getElementById('progressDots');
+            progressBar.setAttribute('aria-valuenow', currentStep);
+
+            dots.forEach((dot, idx) => {
+                if (idx + 1 === currentStep) {
+                    dot.classList.remove('w-2.5', 'bg-pink-200', 'bg-pink-400');
+                    dot.classList.add('w-8', 'bg-pink-500');
+                } else if (idx + 1 < currentStep) {
+                    dot.classList.remove('w-8', 'bg-pink-200', 'bg-pink-500');
+                    dot.classList.add('w-2.5', 'bg-pink-400');
+                } else {
+                    dot.classList.remove('w-8', 'bg-pink-500', 'bg-pink-400');
+                    dot.classList.add('w-2.5', 'bg-pink-200');
+                }
+            });
+
+            // Update step text
+            document.getElementById('stepCounter').textContent = `Page ${currentStep} of ${totalSteps}`;
+
+            // Show/Hide Back button
+            const backBtn = document.getElementById('backBtn');
+            if (currentStep > 1) {
+                backBtn.classList.remove('invisible');
+            } else {
+                backBtn.classList.add('invisible');
+            }
+        }
+
+        // ==========================================
+        // PAGE 5: PHOTO UPLOAD & PREVIEW MANAGEMENT
+        // ==========================================
+        function handlePhotoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imgData = e.target.result;
+                displayUploadedPhoto(imgData);
+
+                // Save to localStorage so it persists on refresh (if within storage limits)
+                try {
+                    localStorage.setItem(PHOTO_STORAGE_KEY, imgData);
+                } catch (err) {
+                    console.warn('Photo too large for localStorage persistence, keeping in session memory.');
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function displayUploadedPhoto(imgSrc) {
+            const previewImg = document.getElementById('uploadedPhotoPreview');
+            const placeholder = document.getElementById('photoPlaceholder');
+            const uploadBtnText = document.getElementById('uploadBtnText');
+            const hideControlsBtn = document.getElementById('hideControlsBtn');
+
+            previewImg.src = imgSrc;
+            previewImg.classList.remove('hidden');
+            placeholder.classList.add('hidden');
+            uploadBtnText.textContent = 'Change Photo';
+            hideControlsBtn.classList.remove('hidden');
+        }
+
+        function togglePhotoControls(hide) {
+            const controls = document.getElementById('photoControls');
+            const showTrigger = document.getElementById('showControlsBtn');
+
+            if (hide) {
+                controls.classList.add('hidden');
+                showTrigger.classList.remove('hidden');
+            } else {
+                controls.classList.remove('hidden');
+                showTrigger.classList.add('hidden');
+            }
+        }
+
+        function loadSavedPhoto() {
+            try {
+                const savedPhoto = localStorage.getItem(PHOTO_STORAGE_KEY);
+                if (savedPhoto) {
+                    displayUploadedPhoto(savedPhoto);
+                }
+            } catch (err) {
+                console.warn('Could not read from localStorage.');
+            }
+        }
+
+        // ==========================================
+        // PAGE 2 HINT INTERACTION
+        // ==========================================
+        function toggleHint() {
+            const hintText = document.getElementById('hintText');
+            const hintBtn = document.getElementById('hintToggleBtn');
+            if (hintText.classList.contains('hidden')) {
+                hintText.classList.remove('hidden');
+                hintBtn.textContent = "Hide hint 🙈";
+            } else {
+                hintText.classList.add('hidden');
+                hintBtn.textContent = "Need a tiny hint? 🔍";
+            }
+        }
+
+        // ==========================================
+        // PAGE 5: DODGING "NO" BUTTON & CELEBRATION
+        // ==========================================
+        function setupDodgingNoButton() {
+            const noBtn = document.getElementById('noBtn');
+            const yesBtn = document.getElementById('yesBtn');
+
+            const dodgeAction = (e) => {
+                if (e) e.preventDefault();
+                noDodgeCount++;
+
+                // Change label playfully
+                const labelIndex = Math.min(noDodgeCount, playfulNoTexts.length - 1);
+                noBtn.textContent = playfulNoTexts[labelIndex];
+
+                // Make the "Yes" button slightly bigger each time they try to click No!
+                const yesScale = Math.min(1 + noDodgeCount * 0.06, 1.35);
+                yesBtn.style.transform = `scale(${yesScale})`;
+
+                // Calculate safe random offset within viewport/card bounds
+                const maxOffsetX = window.innerWidth < 450 ? 95 : 140;
+                const maxOffsetY = 90;
+
+                // Ensure it moves noticeably away from current position
+                let randomX = (Math.random() * 2 - 1) * maxOffsetX;
+                let randomY = (Math.random() * 2 - 1) * maxOffsetY;
+
+                // Avoid overlapping directly over the center Yes button
+                if (Math.abs(randomX) < 45) {
+                    randomX = randomX >= 0 ? 65 : -65;
+                }
+
+                noBtn.style.transform = `translate(${randomX}px, ${randomY}px)`;
+            };
+
+            // Trigger on desktop hover and mobile touch/click
+            noBtn.addEventListener('mouseenter', dodgeAction);
+            noBtn.addEventListener('touchstart', dodgeAction, { passive: false });
+            noBtn.addEventListener('click', dodgeAction);
+        }
+
+        function triggerConfettiBurst() {
+            if (typeof confetti === 'function') {
+                // Left and right pastel romantic bursts
+                confetti({
+                    particleCount: 65,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#f472b6', '#c084fc', '#fb7185', '#fbcfe8', '#e879f9']
+                });
+            }
+        }
+
+        function celebrateYes() {
+            const questionBox = document.getElementById('questionBox');
+            const celebrationBox = document.getElementById('yesCelebration');
+
+            questionBox.classList.add('hidden');
+            celebrationBox.classList.remove('hidden');
+
+            // Grand multi-wave confetti celebration
+            if (typeof confetti === 'function') {
+                const duration = 2500;
+                const end = Date.now() + duration;
+
+                (function frame() {
+                    confetti({
+                        particleCount: 6,
+                        angle: 60,
+                        spread: 55,
+                        origin: { x: 0 },
+                        colors: ['#ec4899', '#a855f7', '#f43f5e', '#f9a8d4']
+                    });
+                    confetti({
+                        particleCount: 6,
+                        angle: 120,
+                        spread: 55,
+                        origin: { x: 1 },
+                        colors: ['#ec4899', '#a855f7', '#f43f5e', '#f9a8d4']
+                    });
+
+                    if (Date.now() < end) {
+                        requestAnimationFrame(frame);
+                    }
+                }());
+            }
+        }
+
+        function resetExperience() {
+            // Reset Page 5 state
+            noDodgeCount = 0;
+            const noBtn = document.getElementById('noBtn');
+            const yesBtn = document.getElementById('yesBtn');
+            noBtn.textContent = "No";
+            noBtn.style.transform = "translate(0px, 0px)";
+            yesBtn.style.transform = "scale(1)";
+
+            document.getElementById('questionBox').classList.remove('hidden');
+            document.getElementById('yesCelebration').classList.add('hidden');
+
+            // Reset Page 2 hint
+            document.getElementById('hintText').classList.add('hidden');
+            document.getElementById('hintToggleBtn').textContent = "Need a tiny hint? 🔍";
+
+            // Return to Page 1
+            goToStep(1);
+        }
+
+        // ==========================================
+        // INITIALIZE ON LOAD
+        // ==========================================
+        window.addEventListener('DOMContentLoaded', () => {
+            createFloatingHearts();
+            setupDodgingNoButton();
+            loadSavedPhoto();
+            updateProgressUI();
+        });
+    </script>
+</body>
+</html>
